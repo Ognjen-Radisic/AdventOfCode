@@ -4,7 +4,7 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 	if (err) throw err;
 
 	// transform text into workable data structure
-	const parsedData = data.split("\n").map((e) => e.replace("\r", ""));
+	const parsedData = data.split(/\r?\n/);
 	const blankSpaceEl = parsedData.find((e) => e === "");
 	const indexOfStackNamesRow = parsedData.indexOf(blankSpaceEl) - 1;
 	const stacks = parsedData[indexOfStackNamesRow].trim().split("   ");
