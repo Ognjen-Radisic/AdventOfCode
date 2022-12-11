@@ -4,53 +4,89 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 	if (err) throw err;
 	const moves = data.split(/\r?\n/);
 	const movementMap = {
-		"0,0": { isHead: true, isTail: true, wasTailHere: true, wasHeadHere: true },
+		"0,0": { wasTailHere: true },
 	};
-	const curHeadPos = { xAxis: 0, yAxis: 0 };
-	const curTailPos = { xAxis: 0, yAxis: 0 };
+	const currentPositions = {};
 
-	moves.forEach((action) => {
+	// create 10 knots, 0 is (first) head, 9 is (last)tail
+	// individual pair: 0head-1tail, 1head-2tail, 2head-3tail... 8head-9tail
+	for (let index = 0; index < 10; index++) {
+		currentPositions[index] = { xAxis: 0, yAxis: 0 };
+	}
+
+	console.log(currentPositions);
+
+	moves.forEach((action, actionIndex) => {
 		const where = action.split(" ")[0];
 		const howMany = +action.split(" ")[1];
 
 		for (let index = 0; index < howMany; index++) {
 			if (where === "L") {
-				curHeadPos.xAxis = curHeadPos.xAxis - 1;
+				currentPositions[0].xAxis -= 1;
 			} else if (where === "U") {
-				curHeadPos.yAxis += 1;
+				currentPositions[0].yAxis += 1;
 			} else if (where === "R") {
-				curHeadPos.xAxis += 1;
+				currentPositions[0].xAxis += 1;
 			} else if (where === "D") {
-				curHeadPos.yAxis -= 1;
+				currentPositions[0].yAxis -= 1;
 			}
-			updateTailPos(curHeadPos, curTailPos);
-			updateTailCoordinates(movementMap, curTailPos.xAxis, curTailPos.yAxis);
+
+			for (let curTail = 1; curTail < 10; curTail++) {
+				// if (curTail === 6)
+				// 	console.log("tail before", "curTail", curTail, currentPositions[curTail]);
+				const head = curTail - 1;
+
+				updateTailPos(currentPositions[head], currentPositions[curTail]);
+				if (curTail === 2) {
+					console.log(actionIndex, "actionIndex", action);
+					console.log(
+						"tail after",
+						"curTail",
+						curTail,
+						currentPositions[curTail]
+					);
+					console.log("===========");
+				}
+			}
+
+			// updateTailCoordinates(
+			// 	movementMap,
+			// 	currentPositions[9].xAxis,
+			// 	currentPositions[9].yAxis
+			// );
+
+			movementMap[`${currentPositions[9].xAxis},${currentPositions[9].yAxis}`] =
+				{
+					wasTailHere: true,
+				};
 		}
 	});
-
-	const totalTiles = Object.keys(movementMap).reduce((acc, key) => {
-		if (movementMap[key].wasTailHere) return (acc += 1);
-		else return acc;
-	}, 0);
-	console.log(totalTiles);
+	console.log(currentPositions);
+	console.log(movementMap);
+	// console.log(
+	// 	Object.keys(movementMap).reduce((acc, key) => {
+	// 		if (movementMap[key].wasTailHere) return (acc += 1);
+	// 		else return acc;
+	// 	}, 0)
+	// );
 });
 
-const updateTailCoordinates = (map, x, y) => {
-	if (map[`${x},${y}`]) {
-		map[`${x},${y}`] = {
-			...map[`${x},${y}`],
-			isTail: true,
-			wasTailHere: true,
-		};
-	} else {
-		map[`${x},${y}`] = {
-			isHead: false,
-			isTail: true,
-			wasTailHere: true,
-			wasHeadHere: false,
-		};
-	}
-};
+// const updateTailCoordinates = (map, x, y) => {
+// 	if (map[`${x},${y}`]) {
+// 		map[`${x},${y}`] = {
+// 			...map[`${x},${y}`],
+// 			isTail: true,
+// 			wasTailHere: true,
+// 		};
+// 	} else {
+// 		map[`${x},${y}`] = {
+// 			isHead: false,
+// 			isTail: true,
+// 			wasTailHere: true,
+// 			wasHeadHere: false,
+// 		};
+// 	}
+// };
 
 const updateTailPos = (head, tail) => {
 	// 12 cases where head position triggers tail movement
