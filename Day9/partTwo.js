@@ -14,8 +14,6 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 		currentPositions[index] = { xAxis: 0, yAxis: 0 };
 	}
 
-	console.log(currentPositions);
-
 	moves.forEach((action, actionIndex) => {
 		const where = action.split(" ")[0];
 		const howMany = +action.split(" ")[1];
@@ -32,28 +30,9 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 			}
 
 			for (let curTail = 1; curTail < 10; curTail++) {
-				// if (curTail === 6)
-				// 	console.log("tail before", "curTail", curTail, currentPositions[curTail]);
 				const head = curTail - 1;
-
 				updateTailPos(currentPositions[head], currentPositions[curTail]);
-				if (curTail === 2) {
-					console.log(actionIndex, "actionIndex", action);
-					console.log(
-						"tail after",
-						"curTail",
-						curTail,
-						currentPositions[curTail]
-					);
-					console.log("===========");
-				}
 			}
-
-			// updateTailCoordinates(
-			// 	movementMap,
-			// 	currentPositions[9].xAxis,
-			// 	currentPositions[9].yAxis
-			// );
 
 			movementMap[`${currentPositions[9].xAxis},${currentPositions[9].yAxis}`] =
 				{
@@ -61,36 +40,14 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 				};
 		}
 	});
-	console.log(currentPositions);
-	console.log(movementMap);
-	// console.log(
-	// 	Object.keys(movementMap).reduce((acc, key) => {
-	// 		if (movementMap[key].wasTailHere) return (acc += 1);
-	// 		else return acc;
-	// 	}, 0)
-	// );
+	const totalTiles = Object.keys(movementMap).reduce((acc, key) => {
+		if (movementMap[key].wasTailHere) return (acc += 1);
+		else return acc;
+	}, 0);
+	console.log(totalTiles);
 });
 
-// const updateTailCoordinates = (map, x, y) => {
-// 	if (map[`${x},${y}`]) {
-// 		map[`${x},${y}`] = {
-// 			...map[`${x},${y}`],
-// 			isTail: true,
-// 			wasTailHere: true,
-// 		};
-// 	} else {
-// 		map[`${x},${y}`] = {
-// 			isHead: false,
-// 			isTail: true,
-// 			wasTailHere: true,
-// 			wasHeadHere: false,
-// 		};
-// 	}
-// };
-
 const updateTailPos = (head, tail) => {
-	// 12 cases where head position triggers tail movement
-
 	//move 1 left or right
 	if (head.yAxis === tail.yAxis) {
 		switch (head.xAxis - tail.xAxis) {
@@ -150,6 +107,37 @@ const updateTailPos = (head, tail) => {
 		(head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === -1) ||
 		(head.yAxis - tail.yAxis === 1 && head.xAxis - tail.xAxis === -2)
 	) {
+		tail.yAxis += 1;
+		tail.xAxis -= 1;
+	}
+
+	// ADDITIONAL MOVEMENT FOR PART TWO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// lots of these exclamation marks because it made me angry how much time I lost, but life goes one :)
+	// I'm not even mad anymore (when you read this remember how big your smile was) xD
+	// Devil is in the details of a text of the problem...
+	// Solution was, after hours of trying, let it rest in the head for 2-3 days, think it through passively.
+	// When I sat today, I solved it in 10 minutes
+
+	//move up right corner diagonally
+	else if (head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === 2) {
+		tail.yAxis += 1;
+		tail.xAxis += 1;
+	}
+
+	//move down right corner diagonally
+	else if (head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === 2) {
+		tail.yAxis -= 1;
+		tail.xAxis += 1;
+	}
+
+	//move down left corner diagonally
+	else if (head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === -2) {
+		tail.yAxis -= 1;
+		tail.xAxis -= 1;
+	}
+
+	//move up left corner diagonally
+	else if (head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === -2) {
 		tail.yAxis += 1;
 		tail.xAxis -= 1;
 	}
