@@ -14,7 +14,7 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 		currentPositions[index] = { xAxis: 0, yAxis: 0 };
 	}
 
-	moves.forEach((action, actionIndex) => {
+	moves.forEach((action) => {
 		const where = action.split(" ")[0];
 		const howMany = +action.split(" ")[1];
 
@@ -40,6 +40,7 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 				};
 		}
 	});
+
 	const totalTiles = Object.keys(movementMap).reduce((acc, key) => {
 		if (movementMap[key].wasTailHere) return (acc += 1);
 		else return acc;
@@ -47,6 +48,7 @@ fs.readFile("data.txt", "utf8", (err, data) => {
 	console.log(totalTiles);
 });
 
+// 16 cases where head position triggers tail movement
 const updateTailPos = (head, tail) => {
 	//move 1 left or right
 	if (head.yAxis === tail.yAxis) {
@@ -75,10 +77,18 @@ const updateTailPos = (head, tail) => {
 		}
 	}
 
+	// ADDITIONAL MOVEMENT FOR PART TWO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	// lots of these exclamation marks because it made me angry how much time I lost, but life goes one :)
+	// I'm not even mad anymore (when you read this remember how big your smile was) xD
+	// Devil is in the details of a text of the problem...
+	// Solution was, after hours of trying, let it rest in the head for 2-3 days, think it through passively.
+	// When I sat today, I solved it in 10 minutes
+
 	//move up right corner
 	else if (
 		(head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === 1) ||
-		(head.yAxis - tail.yAxis === 1 && head.xAxis - tail.xAxis === 2)
+		(head.yAxis - tail.yAxis === 1 && head.xAxis - tail.xAxis === 2) ||
+		(head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === 2)
 	) {
 		tail.yAxis += 1;
 		tail.xAxis += 1;
@@ -87,7 +97,8 @@ const updateTailPos = (head, tail) => {
 	//move down right corner
 	else if (
 		(head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === 1) ||
-		(head.yAxis - tail.yAxis === -1 && head.xAxis - tail.xAxis === 2)
+		(head.yAxis - tail.yAxis === -1 && head.xAxis - tail.xAxis === 2) ||
+		(head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === 2)
 	) {
 		tail.yAxis -= 1;
 		tail.xAxis += 1;
@@ -96,7 +107,8 @@ const updateTailPos = (head, tail) => {
 	//move down left corner
 	else if (
 		(head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === -1) ||
-		(head.yAxis - tail.yAxis === -1 && head.xAxis - tail.xAxis === -2)
+		(head.yAxis - tail.yAxis === -1 && head.xAxis - tail.xAxis === -2) ||
+		(head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === -2)
 	) {
 		tail.yAxis -= 1;
 		tail.xAxis -= 1;
@@ -105,39 +117,9 @@ const updateTailPos = (head, tail) => {
 	//move up left corner
 	else if (
 		(head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === -1) ||
-		(head.yAxis - tail.yAxis === 1 && head.xAxis - tail.xAxis === -2)
+		(head.yAxis - tail.yAxis === 1 && head.xAxis - tail.xAxis === -2) ||
+		(head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === -2)
 	) {
-		tail.yAxis += 1;
-		tail.xAxis -= 1;
-	}
-
-	// ADDITIONAL MOVEMENT FOR PART TWO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// lots of these exclamation marks because it made me angry how much time I lost, but life goes one :)
-	// I'm not even mad anymore (when you read this remember how big your smile was) xD
-	// Devil is in the details of a text of the problem...
-	// Solution was, after hours of trying, let it rest in the head for 2-3 days, think it through passively.
-	// When I sat today, I solved it in 10 minutes
-
-	//move up right corner diagonally
-	else if (head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === 2) {
-		tail.yAxis += 1;
-		tail.xAxis += 1;
-	}
-
-	//move down right corner diagonally
-	else if (head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === 2) {
-		tail.yAxis -= 1;
-		tail.xAxis += 1;
-	}
-
-	//move down left corner diagonally
-	else if (head.yAxis - tail.yAxis === -2 && head.xAxis - tail.xAxis === -2) {
-		tail.yAxis -= 1;
-		tail.xAxis -= 1;
-	}
-
-	//move up left corner diagonally
-	else if (head.yAxis - tail.yAxis === 2 && head.xAxis - tail.xAxis === -2) {
 		tail.yAxis += 1;
 		tail.xAxis -= 1;
 	}
